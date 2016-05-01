@@ -3,13 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package notebook;
+package poznámkový.blok;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.HeadlessException;
 import java.awt.print.PrinterJob;
 import java.awt.print.*;
 import static java.awt.print.Printable.NO_SUCH_PAGE;
@@ -28,44 +26,42 @@ import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
-import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.event.ChangeListener;
 
 /**
  *
  * @author Uzivatel
  */
-public class Okno extends javax.swing.JFrame {
+public class okno extends javax.swing.JFrame {
 
 
-    JFileChooser fileChooser = new JFileChooser();
-    File f;
-    PrinterJob pj,job;
-    PageFormat pf;
-    PrintRequestAttributeSet aset;
-    File filename;
+JFileChooser fileChooser = new JFileChooser();
 
     /**
      * Creates new form okno
      */
-    public Okno() {
+    public okno() {
         initComponents();
          
     }
-    
-    public class PrintDialogExample implements Printable {
-        public int print(Graphics g,PageFormat pf, int page) throws
-            PrinterException {
-            if (page > 0) {
-                return NO_SUCH_PAGE;
-            }
-            Graphics2D g2d = (Graphics2D)g;
-            g2d.translate(pf.getImageableX(), pf.getImageableY());
-            g.drawString(text.getText()+"\n",1,10);
-            return PAGE_EXISTS;
+
+File f;
+PrinterJob pj,job;
+PageFormat pf;
+File filename;
+PrintRequestAttributeSet aset;
+public class PrintDialogExample implements Printable {
+    public int print(Graphics g,PageFormat pf, int page) throws
+        PrinterException {
+        if (page > 0) {
+            return NO_SUCH_PAGE;
         }
+        Graphics2D g2d = (Graphics2D)g;
+        g2d.translate(pf.getImageableX(), pf.getImageableY());
+        g.drawString(text.getText()+"\n",1,10);
+        return PAGE_EXISTS;
+    }
     }
 
     /**
@@ -115,6 +111,7 @@ public class Okno extends javax.swing.JFrame {
         jMenuItem11 = new javax.swing.JMenuItem();
         jMenuItem12 = new javax.swing.JMenuItem();
         jMenuItem3 = new javax.swing.JMenuItem();
+        jMenuItem4 = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
         jMenuItem13 = new javax.swing.JMenuItem();
         jMenu5 = new javax.swing.JMenu();
@@ -270,13 +267,21 @@ public class Okno extends javax.swing.JFrame {
         });
         jMenu3.add(jMenuItem12);
 
-        jMenuItem3.setText("Barva");
+        jMenuItem3.setText("Barva stránky");
         jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem3ActionPerformed(evt);
             }
         });
         jMenu3.add(jMenuItem3);
+
+        jMenuItem4.setText("Barva písma");
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem4ActionPerformed(evt);
+            }
+        });
+        jMenu3.add(jMenuItem4);
 
         jMenuBar1.add(jMenu3);
 
@@ -322,34 +327,32 @@ public class Okno extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void otevritActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_otevritActionPerformed
-        fileChooser.showOpenDialog(text);
-        f = fileChooser.getSelectedFile();
-        this.filename = f.getAbsoluteFile();
-        
-        try (BufferedReader br = new BufferedReader(new FileReader(filename)))
+
+    fileChooser.showOpenDialog(text);
+    f = fileChooser.getSelectedFile();
+    File filename = f.getAbsoluteFile();
+    try (BufferedReader br = new BufferedReader(new FileReader(filename)))
+    {
+        String s;
+        while ((s = br.readLine()) != null)
         {
-            String s;
-            while ((s = br.readLine()) != null)
-            {
-                    text.setText(text.getText()+s+"\n");
-            }
+                text.setText(text.getText()+s+"\n");
         }
-        catch (Exception e)
-        {
-           JOptionPane.showMessageDialog(null,"Chyba při četení ze souboru.");
-        }
+    }
+    catch (Exception e)
+    {
+       JOptionPane.showMessageDialog(null,"Chyba při četení ze souboru.");
+    }
     }//GEN-LAST:event_otevritActionPerformed
 
     private void novyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_novyActionPerformed
-        text.setText("");
-        this.filename.delete();
+text.setText("");
     }//GEN-LAST:event_novyActionPerformed
 
     private void ukoncitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ukoncitActionPerformed
-        System.exit(0);
+       System.exit(0);
     }//GEN-LAST:event_ukoncitActionPerformed
-
-    private void save(boolean jako)
+ private void save(boolean jako)
     {
         if (jako) {
             FileFilter ft = new FileNameExtensionFilter("Textové soubory", "txt");
@@ -357,7 +360,7 @@ public class Okno extends javax.swing.JFrame {
             fileChooser.addChoosableFileFilter(ft);
             fileChooser.addChoosableFileFilter(ft2);
             fileChooser.showSaveDialog(text);
-            f = fileChooser.getSelectedFile(); 
+            f = fileChooser.getSelectedFile();
             this.filename = f.getAbsoluteFile();
         }
         
@@ -375,13 +378,12 @@ public class Okno extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null,"Do souboru se nepovedlo zapsat.");
         }
     }
-    
     private void ulozitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ulozitActionPerformed
-        this.save(false);
+ this.save(false);      
     }//GEN-LAST:event_ulozitActionPerformed
 
     private void ulozitJakoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ulozitJakoActionPerformed
-        this.save(true);
+    this.save(true);
     }//GEN-LAST:event_ulozitJakoActionPerformed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
@@ -390,7 +392,7 @@ public class Okno extends javax.swing.JFrame {
 
     private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
        //tisk
-        try {
+try {
             String cn = UIManager.getSystemLookAndFeelClassName();
             UIManager.setLookAndFeel(cn); 
         } catch (Exception cnf) {
@@ -415,8 +417,6 @@ public class Okno extends javax.swing.JFrame {
 
     private void jMenuItem12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem12ActionPerformed
        // písmo
-       //JFontChooser.showDialog(text);
-       //text.setFont(JFontChooser.getSelectedFont());
     }//GEN-LAST:event_jMenuItem12ActionPerformed
 
     private void jMenuItem23ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem23ActionPerformed
@@ -427,12 +427,18 @@ public class Okno extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem23ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        //barva
-        JColorChooser.showDialog(null,"halo", null);
-        JColorChooser   tcc = new JColorChooser(text.getForeground());
-        Color newColor = tcc.getColor();
-        text.setForeground(newColor);
+        //barva stránky
+        JColorChooser jcc = new JColorChooser ();
+        Color c = jcc.showDialog(null,"Prosím vyberte barvu",Color.RED);
+        text.setBackground(c);
     }//GEN-LAST:event_jMenuItem3ActionPerformed
+
+    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+        //barva písma
+        JColorChooser z = new JColorChooser ();
+        Color v = z.showDialog(null,"Prosím vyberte barvu",Color.RED);
+        text.setForeground(v);
+    }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -451,21 +457,20 @@ public class Okno extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Okno.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(okno.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Okno.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(okno.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Okno.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(okno.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Okno.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(okno.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Okno().setVisible(true);
+                new okno().setVisible(true);
             }
         });
     }
@@ -496,6 +501,7 @@ public class Okno extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem22;
     private javax.swing.JMenuItem jMenuItem23;
     private javax.swing.JMenuItem jMenuItem3;
+    private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenuItem jMenuItem8;
     private javax.swing.JMenuItem jMenuItem9;
